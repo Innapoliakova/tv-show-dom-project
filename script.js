@@ -13,6 +13,32 @@ function makePageForEpisodes(episodeList) {
   rootElem.innerHTML = "";
 // By setting it to an empty string "", any previous content within the element will be deleted.
 
+let allEpisodes = episodeList;
+
+
+// Create the select element
+const select = document.createElement("select");
+select.id = "episode-select";
+rootElem.appendChild(select);
+
+// Create the default option
+const defaultOption = document.createElement("option");
+defaultOption.text = "Select an episode";
+defaultOption.value = "";
+select.add(defaultOption);
+
+
+for (const episode of allEpisodes) {
+  const option = document.createElement("option");
+  option.text = `S${episode.season
+      .toString()
+      .padStart(2, "0")}E${episode.number.toString().padStart(2, "0")} - ${episode.name} `;
+  
+
+  option.value = `S0${episode.season}E0${episode.episode}`;
+  select.add(option);
+}
+
 // create a new input element and assigns it to the searchInput constant:
 const searchInput = document.createElement("input");
 // create a text input field:
@@ -25,8 +51,6 @@ rootElem.appendChild(searchInput);
 const countElem = document.createElement("div");
 countElem.setAttribute("id", "count");
 rootElem.appendChild(countElem);
-
-let allEpisodes = episodeList;
 
 
   // Create a CONTAINER element for ALL EPISODES:
