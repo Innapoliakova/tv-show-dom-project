@@ -7,7 +7,9 @@
 grid-column: 1/3;
 }
 
-.episode {
+
+
+.episode, .episode-filter {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,6 +17,7 @@ grid-column: 1/3;
   padding: 10px;
   border-radius: 5px;
 }
+
 
 .episode-image {
   width: 200px;
@@ -56,4 +59,13 @@ grid-column: 1/3;
 
 h2 {
   margin: 15px;
+}
+
+#search-input,
+#count {
+  display: inline-block;
+}
+
+#search-input {
+  margin: 20px;
 }

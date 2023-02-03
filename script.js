@@ -5,13 +5,28 @@ function setup() {
   makePageForEpisodes(allEpisodes);
 }
 
+
 function makePageForEpisodes(episodeList) {
   const rootElem = document.getElementById("root"); 
   // accessing the element in the HTML document with the id "root"
 
-
   rootElem.innerHTML = "";
 // By setting it to an empty string "", any previous content within the element will be deleted.
+
+// create a new input element and assigns it to the searchInput constant:
+const searchInput = document.createElement("input");
+// create a text input field:
+searchInput.setAttribute("type", "text");
+searchInput.setAttribute("id", "search-input");
+searchInput.setAttribute("placeholder", "Search for episodes");
+rootElem.appendChild(searchInput);
+
+ // create element to display the number of episodes that match the current search:
+const countElem = document.createElement("div");
+countElem.setAttribute("id", "count");
+rootElem.appendChild(countElem);
+
+let allEpisodes = episodeList;
 
 
   // Create a CONTAINER element for ALL EPISODES:
@@ -64,7 +79,7 @@ const episodeImageContainer = document.createElement("div");
     episodeSummary.innerHTML = episode.summary;
   
     episodeInfoSummery.appendChild(episodeSummary);
-    
+
     episodeElem.appendChild(episodeInfoSummery);
      // Append the episode information to the episode element: episodeInfo is being added as a child node to episodeElem. 
 
@@ -74,12 +89,52 @@ const episodeImageContainer = document.createElement("div");
 
   rootElem.appendChild(episodeContainer);
    // Append the episode container to the root element
+
+
+
+// add an event listener to the searchInput element to listen for an "input" event:
+searchInput.addEventListener("input", function() {
+  const searchTerm = this.value.toLowerCase();
+  
+  const filteredEpisodes = allEpisodes.filter(episode => {
+    return (
+      episode.name.toLowerCase().includes(searchTerm) ||
+      episode.summary.toLowerCase().includes(searchTerm)
+    );
+  });
+
+  renderEpisodes(filteredEpisodes);
+  // calls the renderEpisodes function to re-render the episodes on the page, using only the filtered episodes
+});
+
+// function which responsible for rendering the list of episodes on the page:
+function renderEpisodes(episodes) {
+ 
+  episodeContainer.innerHTML = "";
+  // first clearing the HTML content 
+
+  countElem.innerText = `Displaing ${episodes.length}/73 episodes.`;
+  // count all filtered episodes
+
+  episodes.forEach(episode => {
+    
+    const episodeElement = document.createElement("div");
+    
+    episodeElement.classList.add("episode-filter");
+
+    episodeElement.innerHTML = `
+    <h2>${`${episode.name} - S${episode.season
+      .toString()
+      .padStart(2, "0")}E${episode.number.toString().padStart(2, "0")}`}</h2>
+  <img src=" ${episode.image.medium}" alt="${episode.name} image">
+ <p>${episode.summary}</p>
+    `;
+
+    episodeContainer.appendChild(episodeElement);
+  });
+}
 }
 
-function setup() {
-  const allEpisodes = getAllEpisodes();
-  makePageForEpisodes(allEpisodes);
-}
 
 window.onload = setup;
 
