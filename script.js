@@ -13,8 +13,7 @@ function makePageForEpisodes(episodeList) {
   rootElem.innerHTML = "";
 // By setting it to an empty string "", any previous content within the element will be deleted.
 
-let allEpisodes = episodeList;
-
+allEpisodes = episodeList;
 
 // Create the select element
 const select = document.createElement("select");
@@ -27,17 +26,40 @@ defaultOption.text = "Select an episode";
 defaultOption.value = "";
 select.add(defaultOption);
 
-
 for (const episode of allEpisodes) {
   const option = document.createElement("option");
   option.text = `S${episode.season
       .toString()
       .padStart(2, "0")}E${episode.number.toString().padStart(2, "0")} - ${episode.name} `;
-  
-
   option.value = `S0${episode.season}E0${episode.episode}`;
   select.add(option);
 }
+
+
+select.addEventListener("change", function() {
+  const selectedEpisode = this.value
+  episodeContainer.innerHTML = "";
+
+  for (const episode of allEpisodes) {
+    if (`S0${episode.season}E0${episode.episode}` === selectedEpisode) {
+      
+      const episodeElement = document.createElement("div");
+      episodeElement.classList.add("episode-filter");
+      episodeElement.innerHTML = `
+        <h2>${`${episode.name} - S${episode.season
+          .toString()
+          .padStart(2, "0")}E${episode.number.toString().padStart(2, "0")}`}</h2>
+        <img src=" ${episode.image.medium}" alt="${episode.name} image">
+        <p>${episode.summary}</p>
+      `;
+      episodeContainer.appendChild(episodeElement);
+
+      episodeElement.scrollIntoView();
+      break;
+    }
+  }
+});
+
 
 // create a new input element and assigns it to the searchInput constant:
 const searchInput = document.createElement("input");
@@ -143,7 +165,6 @@ function renderEpisodes(episodes) {
   episodes.forEach(episode => {
     
     const episodeElement = document.createElement("div");
-    
     episodeElement.classList.add("episode-filter");
 
     episodeElement.innerHTML = `
@@ -161,4 +182,7 @@ function renderEpisodes(episodes) {
 
 
 window.onload = setup;
+
+
+
 
