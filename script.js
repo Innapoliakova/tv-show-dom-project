@@ -1,38 +1,88 @@
-//You can edit ALL of the code here
+
+
+// //You can edit ALL of the code here
 
 const url = "https://api.tvmaze.com/shows/82/episodes";
 let allEpisodes = [];
-async function setup() {
- try {
-     const response = await fetch(url);
-   const data = await response.json();
-  const allEpisodes = data;
-   makePageForEpisodes(allEpisodes);
- } catch (error) {
-  console.error(error);
- }
- }
 
-//  one more way:
-// const url = "https://api.tvmaze.com/shows/82/episodes";
-// let allEpisodes = [];
-// function setup() {
-//   fetch(url)
-//     .then((res) => res.json())
-//     .then((data) => {
-//       // in here we can do whatever we want with the data
-//       allEpisodes = data;
-//       makePageForEpisodes(allEpisodes);
-//     })
-//     .catch((err) => console.error(err));
-// }
+const rootElem = document.getElementById("root"); 
+rootElem.innerHTML = "";
 
-// without API:
-// function setup() {
-//   const allEpisodes = getAllEpisodes();
-//   makePageForEpisodes(allEpisodes);
-// }
+const selectShow = document.createElement("select");
+selectShow.id = "show-select";
+rootElem.appendChild(selectShow);
 
+const defaultOptionShow = document.createElement("option");
+defaultOptionShow.text = "Select a show";
+defaultOptionShow.value = "";
+selectShow.add(defaultOptionShow);
+
+const selectEp = document.createElement("select");
+selectEp.id = "episode-select";
+rootElem.appendChild(selectEp);
+
+const defaultOptionForSelectEp = document.createElement("option");
+defaultOptionForSelectEp.text = "Select an episode";
+defaultOptionForSelectEp.value = "";
+selectEp.add(defaultOptionForSelectEp);
+
+const searchInput = document.createElement("input");
+searchInput.setAttribute("type", "text");
+searchInput.setAttribute("id", "search-input");
+searchInput.setAttribute("placeholder", "Search for episodes");
+rootElem.appendChild(searchInput);
+
+
+const countElem = document.createElement("div");
+countElem.setAttribute("id", "count");
+rootElem.appendChild(countElem);
+
+const episodeContainer = document.createElement("div");
+episodeContainer.classList.add("episode-container");
+rootElem.appendChild(episodeContainer);
+
+
+function setup() {
+  const allShows = getAllShows();
+  makeSelectShows(allShows);              
+  fetchingShows()
+}
+
+function makeSelectShows(shows) {
+  shows.forEach(eachShow => {
+    const option = document.createElement("option");
+    option.textContent = eachShow.name;
+    option.value = eachShow.id;
+    selectShow.appendChild(option);
+  })
+}
+
+
+function fetchingShows() {
+  selectShow.addEventListener("change", () => {
+    if (selectShow.value === "") {
+      allEpisodes = [];
+      selectEp.innerHTML = "";
+      defaultOptionForSelectEp.selected = true;
+      defaultOptionForSelectEp.hidden = false;
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          allEpisodes = data;
+          makePageForEpisodes(allEpisodes);
+        })
+        .catch(error => console.log(error));
+    } else {
+      fetch(`https://api.tvmaze.com/shows/${selectShow.value}/episodes`)
+        .then(response => response.json())
+        .then(data => {
+          allEpisodes = data;
+          makePageForEpisodes(allEpisodes);
+        })
+        .catch(error => console.log(error));
+    }
+  })
+}
 
 
 function makeSeasonAndEpisode(episode) {
@@ -43,50 +93,30 @@ function makeSeasonAndEpisode(episode) {
   return `S${paddedSeason}E${paddedEpisode}`;
 }
 
+
 function makePageForEpisodes(episodeList) {
-  const rootElem = document.getElementById("root"); 
-  // accessing the element in the HTML document with the id "root"
-
-  rootElem.innerHTML = "";
-// By setting it to an empty string "", any previous content within the element will be deleted.
-
-allEpisodes = episodeList;
-
-// Create the select element
-const select = document.createElement("select");
-select.id = "episode-select";
-rootElem.appendChild(select);
-
-// Create the default option
-const defaultOption = document.createElement("option");
-defaultOption.text = "Select an episode";
-defaultOption.value = "";
-select.add(defaultOption);
-
+  
+allEpisodes = episodeList;  
 
 for (const episode of allEpisodes) {
-  const option = document.createElement("option");
-  option.text = `S${episode.season
+  const optionForEl = document.createElement("option");
+  optionForEl.text = `S${episode.season
       .toString()
       .padStart(2, "0")}E${episode.number.toString().padStart(2, "0")} - ${episode.name} `;
-  option.value = `S0${episode.season}E0${episode.number}`;
-  select.add(option);
+  optionForEl.value = `S0${episode.season}E0${episode.number}`;
+  selectEp.add(optionForEl);
 }
  
-
-
-select.addEventListener("change", function() {
-  
+selectEp.addEventListener("change", function() {
   const selectedEpisode = this.value
   episodeContainer.innerHTML = "";
 
+
   for (const episode of allEpisodes) {
     if (`S0${episode.season}E0${episode.number}` === selectedEpisode) {
-      
       const episodeElement = document.createElement("div");
       episodeElement.classList.add("episode-filter");
-      episodeElement.innerHTML = 
-      `
+      episodeElement.innerHTML = `
         <h2>${`${episode.name} - S${episode.season
           .toString()
           .padStart(2, "0")}E${episode.number.toString().padStart(2, "0")}`}</h2>
@@ -102,88 +132,48 @@ select.addEventListener("change", function() {
 });
 
 
-
-// create a new input element and assigns it to the searchInput constant:
-const searchInput = document.createElement("input");
-// create a text input field:
-searchInput.setAttribute("type", "text");
-searchInput.setAttribute("id", "search-input");
-searchInput.setAttribute("placeholder", "Search for episodes");
-rootElem.appendChild(searchInput);
-
- // create element to display the number of episodes that match the current search:
-const countElem = document.createElement("div");
-countElem.setAttribute("id", "count");
-rootElem.appendChild(countElem);
-
-
-  // Create a CONTAINER element for ALL EPISODES:
-  const episodeContainer = document.createElement("div");
-  episodeContainer.classList.add("episode-container");
-
-
-  // Iterate over each episode in the list:
-  episodeList.forEach(episode => {
+episodeList.forEach(episode => {
     
-    // Create a BIG CONTAINER for HOLE EACH EPISODE:
     const episodeElem = document.createElement("div");
     episodeElem.classList.add("episode");
 
-    // Create a div for the EPISODE INFORMATION (include: episode name, season number and episode number):
     const episodeInfo = document.createElement("div");
     episodeInfo.classList.add("episode-info");
 
-    // Create a heading for the episode NAME:
     const episodeName = document.createElement("h2");
     episodeName.textContent = episode.name;
+    
     episodeInfo.appendChild(episodeName);
-     episodeElem.appendChild(episodeInfo);
+    episodeElem.appendChild(episodeInfo);
 
     episodeName.innerText = `${episode.name} - S${episode.season
       .toString()
       .padStart(2, "0")}E${episode.number.toString().padStart(2, "0")}`;
 
-// Create a div - CONTAINER for image:
-const episodeImageContainer = document.createElement("div");
+    const episodeImageContainer = document.createElement("div");
     episodeImageContainer.classList.add("episode-image-container");
- episodeElem.appendChild(episodeImageContainer);
+    episodeElem.appendChild(episodeImageContainer);
  
-
- // Create an IMAGE element for the episode:
     const episodeImage = document.createElement("img");
     episodeImage.src = episode.image.medium;
-    // // By setting the src property to the value of episode.image.medium, we are defining the source of the image to be the URL stored in the medium property of the current episode object.
     episodeImage.alt = `Image for ${episode.name}`;
-    // The value of alt is set to a template string that contains the name of the episode, so in case the image can't be loaded, the user will see a text description indicating the name of the episode.
     episodeImageContainer.appendChild(episodeImage);
 
-
-      // Create a div for the EPISODE INFORMATION-summery:
     const episodeInfoSummery = document.createElement("div");
     episodeInfoSummery.classList.add("episode-info-sum");
 
-    // Create a paragraph for the episode SUMMARY:
     const episodeSummary = document.createElement("p");
     episodeSummary.innerHTML = episode.summary;
-  
     episodeInfoSummery.appendChild(episodeSummary);
 
     episodeElem.appendChild(episodeInfoSummery);
-     // Append the episode information to the episode element: episodeInfo is being added as a child node to episodeElem. 
 
     episodeContainer.appendChild(episodeElem);
-      // Append the episode element to the episode container: similar like previos step 
   });
 
-  rootElem.appendChild(episodeContainer);
-   // Append the episode container to the root element
-
-
-
-// add an event listener to the searchInput element to listen for an "input" event:
+ 
 searchInput.addEventListener("input", function() {
   const searchTerm = this.value.toLowerCase();
-  
   const filteredEpisodes = allEpisodes.filter(episode => {
     return (
       episode.name.toLowerCase().includes(searchTerm) ||
@@ -192,25 +182,16 @@ searchInput.addEventListener("input", function() {
   });
 
   renderEpisodes(filteredEpisodes);
-  // calls the renderEpisodes function to re-render the episodes on the page, using only the filtered episodes
 });
 
 
-
-// function which responsible for rendering the list of episodes on the page:
 function renderEpisodes(episodes) {
- 
   episodeContainer.innerHTML = "";
-  // first clearing the HTML content 
-
   countElem.innerText = `Displaing ${episodes.length}/73 episodes.`;
-  // count all filtered episodes
 
   episodes.forEach(episode => {
-    
     const episodeElement = document.createElement("div");
     episodeElement.classList.add("episode-filter");
-
     episodeElement.innerHTML = `
     <h2>${`${episode.name} - S${episode.season
       .toString()
@@ -223,7 +204,6 @@ function renderEpisodes(episodes) {
   });
 }
 }
-
 
 window.onload = setup;
 

@@ -70,6 +70,10 @@ h2 {
   margin: 20px;
 }
 
+#show-select {
+    margin: 20px;
+  }
+
 footer {
   text-align: center;
 }
