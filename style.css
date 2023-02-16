@@ -1,4 +1,8 @@
 
+body {
+  background-image: url(https://pbs.twimg.com/media/Fo23jjhWYAAhuDk?format=jpg&name=medium);
+  height: 100%;
+}
 .episode-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -76,4 +80,5 @@ h2 {
 
 footer {
   text-align: center;
+  color: #f2f2f2;
 }
