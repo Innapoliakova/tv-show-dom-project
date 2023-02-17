@@ -187,7 +187,7 @@ searchInput.addEventListener("input", function() {
 
 function renderEpisodes(episodes) {
   episodeContainer.innerHTML = "";
-  countElem.innerText = `Displaing ${episodes.length}/73 episodes.`;
+  countElem.innerText = `Displaing ${episodes.length}/${allEpisodes.length} episodes.`;
 
   episodes.forEach(episode => {
     const episodeElement = document.createElement("div");
