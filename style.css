@@ -1,7 +1,7 @@
 
 body {
-  background-image: url(https:i.guim.co.uk/img/media/a33a20658e6da5c7d4a1012828f8aca43a343e9a/0_212_4500_2700/master/4500.jpg?width=1200&height=900&quality=85&auto=format&fit=crop&s=a8d174a992f5814a60cf5ebe640fcfb8);
-  
+  background-image: url(https:images6.fanpop.com/image/photos/34300000/Labyrinth-labyrinth-2012-mini-series-34397980-1536-1017.jpg);
+  background-color: blue;
 }
 .episode-container {
   display: grid;
@@ -119,6 +119,7 @@ h {
   }
 
   body {
-    background-image: url(https:cdn.cliqueinc.com/posts/260417/most-stylish-90s-tv-shows-260417-1529088708355-image.700x0c.jpg);
+    background-image: url(https:i.pinimg.com/736x/3d/25/c2/3d25c25a4cd6c547c10921950863f52e.jpg);
+    background-color: blue;
   }
 }
