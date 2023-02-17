@@ -1,6 +1,6 @@
 
 body {
-  background-image: url(https:ichef.bbci.co.uk/images/ic/1200x675/p09mj92x.jpg);
+  background-image: url(https:bornrealist.com/wp-content/uploads/2017/08/6362340176166035371737052555_Friends.jpg);
   
 }
 .episode-container {
@@ -112,13 +112,13 @@ h {
   color: whitesmoke;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 700px) {
   .episode-container {
     grid-template-columns: repeat(2, 1fr);
     grid-column: 1/2;
   }
 
   body {
-    background-image: url(https:www.popsci.com/uploads/2019/03/18/C7RD5PWBOMN6U7CSIUSWXI2DUE.jpg?auto=webp);
+    background-image: url(https:cdn.cliqueinc.com/posts/260417/most-stylish-90s-tv-shows-260417-1529088708355-image.700x0c.jpg);
   }
 }
