@@ -60,19 +60,25 @@ function makeSelectShows(shows) {
 
 function fetchingShows() {
   selectShow.addEventListener("change", () => {
+    episodeContainer.innerHTML = "";
+    selectEp.innerHTML = "";
+    countElem.innerText = "";
+    
     if (selectShow.value === "") {
-      allEpisodes = [];
-      selectEp.innerHTML = "";
       defaultOptionForSelectEp.selected = true;
       defaultOptionForSelectEp.hidden = false;
+     
       fetch(url)
         .then(response => response.json())
         .then(data => {
+           
           allEpisodes = data;
           makePageForEpisodes(allEpisodes);
         })
         .catch(error => console.log(error));
+
     } else {
+      
       fetch(`https://api.tvmaze.com/shows/${selectShow.value}/episodes`)
         .then(response => response.json())
         .then(data => {
@@ -95,45 +101,32 @@ function makeSeasonAndEpisode(episode) {
 
 
 function makePageForEpisodes(episodeList) {
-  
-allEpisodes = episodeList;  
-
-for (const episode of allEpisodes) {
-  const optionForEl = document.createElement("option");
-  optionForEl.text = `S${episode.season
-      .toString()
-      .padStart(2, "0")}E${episode.number.toString().padStart(2, "0")} - ${episode.name} `;
-  optionForEl.value = `S0${episode.season}E0${episode.number}`;
-  selectEp.add(optionForEl);
-}
- 
-selectEp.addEventListener("change", function() {
-  const selectedEpisode = this.value
-  episodeContainer.innerHTML = "";
-
+  allEpisodes = episodeList;
 
   for (const episode of allEpisodes) {
-    if (`S0${episode.season}E0${episode.number}` === selectedEpisode) {
-      const episodeElement = document.createElement("div");
-      episodeElement.classList.add("episode-filter");
-      episodeElement.innerHTML = `
-        <h2>${`${episode.name} - S${episode.season
-          .toString()
-          .padStart(2, "0")}E${episode.number.toString().padStart(2, "0")}`}</h2>
-        <img src=" ${episode.image.medium}" alt="${episode.name} image">
-        <p>${episode.summary}</p>
-      `;
-      episodeContainer.appendChild(episodeElement);
-
-      episodeElement.scrollIntoView();
-      break;
-    }
+    const optionForEl = document.createElement("option");
+    optionForEl.text = `S${episode.season
+      .toString()
+      .padStart(2, "0")}E${episode.number.toString().padStart(2, "0")} - ${episode.name} `;
+    optionForEl.value = `S0${episode.season}E0${episode.number}`;
+    selectEp.add(optionForEl);
   }
-});
 
+  selectEp.addEventListener("change", function() {
+    const selectedEpisode = this.value;
+    episodeContainer.innerHTML = "";
 
-episodeList.forEach(episode => {
-    
+    for (const episode of allEpisodes) {
+      if (`S0${episode.season}E0${episode.number}` === selectedEpisode) {
+        const episodeElement = createEpisodeElement(episode);
+        episodeContainer.appendChild(episodeElement);
+        episodeElement.scrollIntoView();
+        break;
+      }
+    }
+  });
+
+  episodeList.forEach(episode => {
     const episodeElem = document.createElement("div");
     episodeElem.classList.add("episode");
 
@@ -142,7 +135,7 @@ episodeList.forEach(episode => {
 
     const episodeName = document.createElement("h2");
     episodeName.textContent = episode.name;
-    
+
     episodeInfo.appendChild(episodeName);
     episodeElem.appendChild(episodeInfo);
 
@@ -153,7 +146,7 @@ episodeList.forEach(episode => {
     const episodeImageContainer = document.createElement("div");
     episodeImageContainer.classList.add("episode-image-container");
     episodeElem.appendChild(episodeImageContainer);
- 
+
     const episodeImage = document.createElement("img");
     episodeImage.src = episode.image.medium;
     episodeImage.alt = `Image for ${episode.name}`;
@@ -171,39 +164,41 @@ episodeList.forEach(episode => {
     episodeContainer.appendChild(episodeElem);
   });
 
- 
-searchInput.addEventListener("input", function() {
-  const searchTerm = this.value.toLowerCase();
-  const filteredEpisodes = allEpisodes.filter(episode => {
-    return (
-      episode.name.toLowerCase().includes(searchTerm) ||
-      episode.summary.toLowerCase().includes(searchTerm)
-    );
+  searchInput.addEventListener("input", function() {
+    const searchTerm = this.value.toLowerCase();
+    const filteredEpisodes = allEpisodes.filter(episode => {
+      return (
+        episode.name.toLowerCase().includes(searchTerm) ||
+        episode.summary.toLowerCase().includes(searchTerm)
+      );
+    });
+    renderEpisodes(filteredEpisodes);
   });
 
-  renderEpisodes(filteredEpisodes);
-});
-
-
-function renderEpisodes(episodes) {
-  episodeContainer.innerHTML = "";
-  countElem.innerText = `Displaing ${episodes.length}/${allEpisodes.length} episodes.`;
-
-  episodes.forEach(episode => {
+  function createEpisodeElement(episode) {
     const episodeElement = document.createElement("div");
     episodeElement.classList.add("episode-filter");
     episodeElement.innerHTML = `
-    <h2>${`${episode.name} - S${episode.season
-      .toString()
-      .padStart(2, "0")}E${episode.number.toString().padStart(2, "0")}`}</h2>
-  <img src=" ${episode.image.medium}" alt="${episode.name} image">
- <p>${episode.summary}</p>
+      <h2>${`${episode.name} - S${episode.season
+        .toString()
+        .padStart(2, "0")}E${episode.number.toString().padStart(2, "0")}`}</h2>
+      <img src=" ${episode.image.medium}" alt="${episode.name} image">
+      <p>${episode.summary}</p>
     `;
+    return episodeElement;
+  }
 
-    episodeContainer.appendChild(episodeElement);
-  });
+  function renderEpisodes(episodes) {
+    episodeContainer.innerHTML = "";
+    countElem.innerText = `Displaying ${episodes.length}/${allEpisodes.length} episodes.`;
+
+    episodes.forEach(episode => {
+      const episodeElement = createEpisodeElement(episode);
+      episodeContainer.appendChild(episodeElement);
+    });
+  }
 }
-}
+
 
 window.onload = setup;
 
